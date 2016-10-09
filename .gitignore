@@ -22,3 +22,5 @@ wordcount.jar
 wordcount$MapClass.class
 
 wordcount$Reduce.class
+
+*.sh~
