@@ -14,3 +14,11 @@ wen/wordcount.class
 wen/wordcount$MapClass.class
 
 wen/wordcount$Reduce.class
+
+wordcount.class
+
+wordcount.jar
+
+wordcount$MapClass.class
+
+wordcount$Reduce.class
