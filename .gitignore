@@ -1,26 +1,6 @@
 
-wen/wordcount.java~
+*~
 
-wen/try.sh~
+*.class
 
-wen/makefile~
-
-wen/stop-words~
-
-wen/wordcount.jar
-
-wen/wordcount.class
-
-wen/wordcount$MapClass.class
-
-wen/wordcount$Reduce.class
-
-wordcount.class
-
-wordcount.jar
-
-wordcount$MapClass.class
-
-wordcount$Reduce.class
-
-*.sh~
+*.jar

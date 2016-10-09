@@ -31,15 +31,8 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.FileOutputFormat;
-import org.apache.hadoop.mapred.JobClient;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.MapReduceBase;
-import org.apache.hadoop.mapred.Mapper;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reducer;
-import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapred.*;
+import org.apache.hadoop.mapred.lib.InverseMapper;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.hadoop.fs.FileSystem;
@@ -69,17 +62,6 @@ public class wordcount extends Configured implements Tool {
         HashSet<String> stopWords = new HashSet<String>();
 
         public void configure(JobConf job) {
-     		/*try{
-            	BufferedReader reader = new BufferedReader(new FileReader("stop-words"));
-            	String words = reader.readLine();
-            	StringTokenizer sitr = new StringTokenizer(words);
-            	while (sitr.hasMoreTokens()) {
-                stopWords.add(sitr.nextToken());
-            	}
-        	}catch (IOException e){
-        		e.printStackTrace();
-        	} 
-			System.out.println(stopWords.toString());*/
             String uri = "stop-words";
             try {
                 FileSystem fs = FileSystem.get(URI.create(uri), job);
@@ -93,7 +75,7 @@ public class wordcount extends Configured implements Tool {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-			System.out.println(stopWords.toString());
+            System.out.println(stopWords.toString());
         }
 
         public void map(LongWritable key, Text value,
@@ -150,8 +132,6 @@ public class wordcount extends Configured implements Tool {
      *                     job tracker.
      */
     public int run(String[] args) throws Exception {
-        HashSet<String> stopWords = new HashSet<String>();
-
         JobConf conf = new JobConf(getConf(), wordcount.class);
         conf.setJobName("wordcount");
         // the keys are words (strings)
@@ -162,6 +142,9 @@ public class wordcount extends Configured implements Tool {
         conf.setMapperClass(MapClass.class);
         conf.setCombinerClass(Reduce.class);
         conf.setReducerClass(Reduce.class);
+
+        conf.setOutputFormat(SequenceFileOutputFormat.class);
+
 
         List<String> other_args = new ArrayList<String>();
         for(int i=0; i < args.length; ++i) {
@@ -191,9 +174,10 @@ public class wordcount extends Configured implements Tool {
             return printUsage();
         }
         FileInputFormat.setInputPaths(conf, other_args.get(0));
-        FileOutputFormat.setOutputPath(conf, new Path(other_args.get(1)));
+        FileOutputFormat.setOutputPath(conf, new Path("temp"));
 
         JobClient.runJob(conf);
+
         return 0;
     }
 
